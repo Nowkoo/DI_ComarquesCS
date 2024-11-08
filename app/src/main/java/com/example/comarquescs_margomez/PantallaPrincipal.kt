@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,23 +60,28 @@ fun ItemComarca(comarca: Comarca, snackbarHostState: SnackbarHostState) {
         modifier = Modifier
             .padding(5.dp)
             .fillMaxWidth()
+            .height(200.dp)
             .clickable {
                 scope.launch {
                     snackbarHostState.showSnackbar(comarca.descripcion)
                 }
             }
     ) {
-        Row {
-            Box (
+        Row(
+            modifier = Modifier.fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
                 modifier = Modifier
                     .weight(5f)
+                    .fillMaxHeight()
             ) {
                 Image(
                     painter = painterResource(comarca.imagen),
                     contentDescription = comarca.comarca,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(200.dp),
+                        .height(200.dp),
                     contentScale = ContentScale.Crop
                 )
 
@@ -88,10 +95,12 @@ fun ItemComarca(comarca: Comarca, snackbarHostState: SnackbarHostState) {
                 )
             }
 
-            Column (
-                modifier = Modifier.weight(5f),
+            Column(
+                modifier = Modifier
+                    .weight(5f)
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(15.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterVertically)
             ) {
                 Text(
                     text = comarca.capital,
@@ -119,6 +128,8 @@ fun ItemComarca(comarca: Comarca, snackbarHostState: SnackbarHostState) {
         }
     }
 }
+
+
 
 fun getComarques(): List<Comarca> {
     return listOf(

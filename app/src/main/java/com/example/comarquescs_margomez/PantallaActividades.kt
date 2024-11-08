@@ -4,6 +4,8 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsEndWidth
@@ -81,9 +83,7 @@ fun PantallaActividades(modifier: Modifier) {
             fontSize = 20.sp
         )
 
-        Row {
-            ChipArray(chipLabels, context)
-        }
+        ChipArray(chipLabels, context)
 
         Text (
             text = "Activitats:",
@@ -93,7 +93,7 @@ fun PantallaActividades(modifier: Modifier) {
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = modifier.fillMaxWidth().weight(9f),
+            modifier = modifier.fillMaxSize().weight(1f),
             content = {
                 items(checkboxLabels.size) { index ->
                     ItemCheckbox(checkboxLabels[index])
@@ -111,7 +111,6 @@ fun PantallaActividades(modifier: Modifier) {
                 modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.CenterHorizontally)
-                    .weight(1f)
             ) {
                 Text(text = "Cerca la teva activitat")
             }
@@ -139,19 +138,21 @@ fun ItemCheckbox(label: String) {
 fun ChipArray(chipLabels: List<String>, context: Context) {
     var selectedChip: String? by remember { mutableStateOf(null) }
 
-    for (label in chipLabels) {
-        FilterChip(
-            modifier = Modifier.padding(5.dp),
-            onClick = {
-                Toast.makeText(context, label, Toast.LENGTH_SHORT).show()
-            },
-            label = {
-                Text(label)
-            },
-            selected = false,
-            colors = FilterChipDefaults.filterChipColors(
-                containerColor = MaterialTheme.colorScheme.tertiary
+    Row {
+        for (label in chipLabels) {
+            FilterChip(
+                modifier = Modifier.padding(5.dp),
+                onClick = {
+                    Toast.makeText(context, label, Toast.LENGTH_SHORT).show()
+                },
+                label = {
+                    Text(label)
+                },
+                selected = false,
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
             )
-        )
+        }
     }
 }

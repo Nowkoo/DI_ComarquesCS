@@ -4,13 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -34,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,6 +56,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
                 var fabAlfaValue by remember { mutableStateOf(0f) }
+                var topBarTitle by remember { mutableStateOf("Comarques Castelló") }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -59,21 +64,27 @@ class MainActivity : ComponentActivity() {
                         SnackbarHost(hostState = snackbarHostState)
                     },
                     topBar = { CreateTopAppBar(
-                        "Comarques Castelló",
-                        navController,
-                        { newFabAlfaValue -> fabAlfaValue = newFabAlfaValue}
+                        topBarTitle,
+                        navController
                     ) }
                 ) { innerPadding ->
                     NavHost(navController = navController, startDestination = "PantallaPrincipal") {
-                        composable("PantallaPrincipal") { PantallaPrincipal(Modifier.padding(innerPadding), snackbarHostState)}
-                        composable("PantallaActividades") { PantallaActividades(Modifier.padding(innerPadding)) }
+                        composable("PantallaPrincipal") {
+                            fabAlfaValue = 0f
+                            topBarTitle = "Comarques Castelló"
+                            PantallaPrincipal(Modifier.padding(innerPadding), snackbarHostState)
+                        }
+                        composable("PantallaActividades") {
+                            fabAlfaValue = 1f
+                            topBarTitle = "Cerca d'Activitats"
+                            PantallaActividades(Modifier.padding(innerPadding))
+                        }
                     }
 
                     Box(Modifier.padding(20.dp).fillMaxSize()) {
                         FloatingActionButton(
                             onClick = {
                                 navController.navigate("PantallaPrincipal")
-                                fabAlfaValue = 0f
                                 },
                             Modifier
                                 .align(Alignment.BottomEnd)
@@ -92,7 +103,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTopAppBar(titulo: String, navController: NavController, onNavigationChange: (Float) -> Unit) {
+fun CreateTopAppBar(titulo: String, navController: NavController) {
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
@@ -101,24 +112,24 @@ fun CreateTopAppBar(titulo: String, navController: NavController, onNavigationCh
             titleContentColor = Color.Black,
         ),
         title = {
-            Text(
-                text = titulo,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(PaddingValues(start = 20.dp))
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description"
+            Row (verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(R.drawable.logo),
+                    contentDescription = "logo",
+                    modifier = Modifier
+                        .size(50.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Text(
+                    text = titulo,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(PaddingValues(start = 20.dp))
                 )
             }
         },
         actions = {
-
             IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
@@ -133,7 +144,7 @@ fun CreateTopAppBar(titulo: String, navController: NavController, onNavigationCh
                     text = { Text("Activitats") },
                     onClick = {
                         navController.navigate("PantallaActividades")
-                        onNavigationChange(1f)
+                        showMenu = false
                     }
                 )
             }
